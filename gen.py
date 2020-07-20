@@ -7,23 +7,28 @@ crsr = connection.cursor()
 
 
 def Query(site):
-    q = "select password from passwords where site_name ='" + site + "'"
+    q = "select * from passwords where site_name like '%" + site + "%'"
     return q
 
+
 def insert_query(obj):
-    Q = "insert into passwords values ('" + obj.site_name + "','" + obj.password + "')"
+    Q = "insert into passwords values ('" + \
+        obj.site_name + "','" + obj.password + "')"
     return Q
 
 
 class password_class:
     site_name = None
     password = None
-    def __init__(self,site,password):
+
+    def __init__(self, site, password):
         self.site_name = site
         self.password = password
+
     def __repr__(self):
         return self.site_name + " " + self.password
-    
+
+
 def retrive_password(site):
     query = Query(site)
     crsr.execute(query)
@@ -31,30 +36,32 @@ def retrive_password(site):
     # crsr.close()
     return ans
 
+
 def get_new_password():
     caps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     low = "abcdefghijklmnopqrstuvwxyz"
     digits = "0123456789"
     special = "!@#$%&*+"
-    strings = [caps,low,digits,special]
-    length = randint(8,16)
+    strings = [caps, low, digits, special]
+    length = randint(8, 16)
     password = ""
-    ind = randint(0,25)
+    ind = randint(0, 25)
     password += caps[ind]
-    ind = randint(0,25)
+    ind = randint(0, 25)
     password += low[ind]
-    ind = randint(0,9)
+    ind = randint(0, 9)
     password += digits[ind]
-    ind = randint(0,7)
+    ind = randint(0, 7)
     password += special[ind]
     length -= 4
     for i in range(length):
-        ind = randint(0,3)
+        ind = randint(0, 3)
         str_len = len(strings[ind])
-        ind2 = randint(0,str_len-1)
+        ind2 = randint(0, str_len-1)
         password += strings[ind][ind2]
-    ''.join(random.sample(password,len(password)))
+    ''.join(random.sample(password, len(password)))
     return password
+
 
 def insert(obj):
     print(obj)
@@ -62,6 +69,7 @@ def insert(obj):
     crsr.execute(query)
     connection.commit()
     # print(query)
+
 
 def new_password():
     print("Enter site")
@@ -73,24 +81,25 @@ def new_password():
     if responce == "NO" or responce == "no" or responce == "No":
         print("Thank-you")
     else:
-        obj = password_class(site,password)
+        obj = password_class(site, password)
         insert(obj)
-    
-    
+
 
 def old_password():
     print("Enter site")
     site = input()
     password = retrive_password(site)
     try:
-        print(password[0])
-    except IndexError: 
+        for obj in password:
+            print("site :- ", obj[0], "\t\t\t\t\t", "password :- ", obj[1])
+    except IndexError:
         print("no site found")
+
 
 def print_table():
     crsr.execute("select * from passwords")
-    for x in crsr.fetchall():
-        print(x)
+    for obj in crsr.fetchall():
+        print("site :- ", obj[0], "\t\t\t\t\t", "password :- ", obj[1])
     # crsr.close()
 
 
@@ -99,11 +108,13 @@ def add_password():
     site = input()
     print("password :- ")
     password = input()
-    obj = password_class(site,password)
+    obj = password_class(site, password)
     insert(obj)
+
 
 def delete_(site_name):
     return "delete from passwords where site_name = '" + site_name + "'"
+
 
 def delete_row():
     print("enter site name :-")
@@ -111,9 +122,10 @@ def delete_row():
     query = delete_(site_name)
     try:
         crsr.execute(query)
-    except :
+    except:
         print(site_name, "not found!!")
     connection.commit()
+
 
 if __name__ == "__main__":
     print("Hi Deepak..\nEnter \n1 :- get Old password\n2 :- create new password\n3 :- print full table\n4 :- add password\n5 :- delete a site\n6 :- exit")
@@ -130,4 +142,3 @@ if __name__ == "__main__":
     elif choice == 5:
         delete_row()
     connection.close()
-    
