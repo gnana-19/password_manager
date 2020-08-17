@@ -131,7 +131,6 @@ if __name__ == "__main__":
     print("Hi Deepak..\nEnter \n1 :- get Old password\n2 :- create new password\n3 :- print full table\n4 :- add password\n5 :- delete a site\n6 :- exit")
     choice = int(input())
     if choice == 1:
-        print("GAJINI\nGAJINI")
         old_password()
     elif choice == 2:
         new_password()
